@@ -1,0 +1,96 @@
+<project name="ClassWiper" basedir="." default="compile">
+   <property name="junit.dir" location="junit-results"/>
+   <property name="artifacts" location="artifacts"/>
+   <property name="prepare.jar" location="prepare-jar"/>
+   <property name="prepare.zip" location="prepare-zip"/>
+
+   <target name="clean">
+      <delete dir="${artifacts}" quiet="true" />
+      <delete dir="bin" quiet="true" />
+      <delete dir="${prepare.jar}" quiet="true" />
+      <delete dir="${prepare.zip}" quiet="true" />
+   </target>
+
+   <target name="init">
+      <tstamp>
+         <format property="BUILD_GMT" pattern="yyyyMMdd-HHmm" timezone="GMT+0"/>
+      </tstamp>
+      <mkdir dir="target"/>      
+   </target>
+
+   <target name="compile" depends="init">
+      <mkdir dir="bin"/>
+      <javac encoding="UTF-8" source="1.5" target="1.5" debug="true" debuglevel="lines,vars,source" srcdir="src" destdir="bin">
+         <classpath>
+            <pathelement location="libs/junit-4.8.1.jar"/>
+            <pathelement location="libs/asm-3.2.jar"/>
+         </classpath>
+      </javac>
+      <copy todir="bin">
+         <fileset dir="src">
+            <exclude name="**/*.java"/>
+         </fileset>
+      </copy>          
+   </target>
+
+
+
+   <target name="test" depends="clean,compile">
+      <mkdir dir="${junit.dir}"/>
+      <junit dir="${basedir}" fork="on" haltonfailure="yes" printsummary="on">
+         <classpath>
+            <pathelement location="bin"/>
+            <pathelement location="libs/junit-4.8.1.jar"/>
+            <pathelement location="libs/asm-3.2.jar"/>
+         </classpath>
+         <formatter type="brief" usefile="false"/>
+         <formatter type="xml" />
+         <test name="com.blogspot.javadots.classwiper.All_Tests" todir="${junit.dir}" fork="yes"/>
+      </junit>
+   </target>
+
+
+
+   <target name="jar" depends="compile">
+      <delete dir="${prepare.jar}" quiet="true"/>
+      <mkdir dir="${prepare.jar}"/>
+      <copy file="root/LICENSE" todir="${prepare.jar}"/>
+      <copy todir="${prepare.jar}">
+         <fileset dir="bin"/>
+      </copy>          
+      <unjar src="libs/asm-3.2.jar" dest="${prepare.jar}"/>
+      <unjar src="libs/junit-4.8.1.jar" dest="${prepare.jar}"/>
+ 	  <mkdir dir="${artifacts}"/>
+      <jar 
+         destfile="${artifacts}/class-wiper.jar" 
+         basedir="${prepare.jar}">
+         <manifest>
+         	<attribute name="Main-Class" value="com.blogspot.javadots.classwiper.Main"/>
+            <attribute name="Implementation-Vendor" value="http://javadots.blogspot.com"/>
+            <attribute name="Class-Wiper-Build-Time" value="${BUILD_GMT}"/>
+          </manifest>         
+      </jar>
+      <delete dir="${prepare.jar}" quiet="true"/>
+   </target>
+   
+   <target name="zip" depends="jar">
+      <delete dir="${prepare.zip}" quiet="true"/>
+      <mkdir dir="${prepare.zip}"/>
+      <mkdir dir="${prepare.zip}/class-wiper"/>
+
+      <copy todir="${prepare.zip}/class-wiper" file="${artifacts}/class-wiper.jar" />
+      <copy todir="${prepare.zip}/class-wiper">
+         <fileset dir="root"/>
+      </copy>
+
+      <zip destfile="${prepare.zip}/class-wiper/src.zip" basedir="src"/>
+      <mkdir dir="${artifacts}"/>
+      <zip 
+         destfile="${artifacts}/class-wiper-${BUILD_GMT}.zip" 
+         basedir="${prepare.zip}"/>   
+      <delete dir="${prepare.zip}" quiet="true"/>
+   </target>
+
+   <target name="clean.zip" depends="clean,test,zip"/>
+   
+</project>
