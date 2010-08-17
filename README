@@ -1,4 +1,4 @@
-ClassWiper: Delete JUnit-related .class files
+class-wiper: Delete JUnit-related .class files
 
 Usage: java -jar class-wiper.jar <dir1> <dir2> ...
 
@@ -10,15 +10,3 @@ Options
   -h Show this help message
   -q Quiet mode. Do not print summary
 
-G:\temp\New Folder>java -jar artifacts\class-wiper.jar bin -h
-ClassWiper: Delete JUnit-related .class files
-
-Usage: java -jar class-wiper.jar <dir1> <dir2> ...
-
-Look for classes (under the specified directories) that either mention
-JUnit's @Test annotation, or that rely on such classes. corresponding
-.class files will be discarded.
-
-Options
-  -h Show this help message
-  -q Quiet mode. Do not print summary
