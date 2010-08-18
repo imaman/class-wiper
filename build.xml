@@ -15,7 +15,6 @@
       <tstamp>
          <format property="BUILD_GMT" pattern="yyyyMMdd-HHmm" timezone="GMT+0"/>
       </tstamp>
-      <mkdir dir="target"/>      
    </target>
 
    <target name="compile" depends="init">
@@ -60,7 +59,7 @@
       </copy>          
       <unjar src="libs/asm-3.2.jar" dest="${prepare.jar}"/>
       <unjar src="libs/junit-4.8.1.jar" dest="${prepare.jar}"/>
- 	  <mkdir dir="${artifacts}"/>
+      <mkdir dir="${artifacts}"/>
       <jar 
          destfile="${artifacts}/class-wiper.jar" 
          basedir="${prepare.jar}">
